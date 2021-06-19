@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+input, textarea, button {
+  border: none;
+  padding: 8px;
+}
+
+button {
+  background-color: darkolivegreen;
+  border: 1px solid #000;
+  color: #fff;
+}

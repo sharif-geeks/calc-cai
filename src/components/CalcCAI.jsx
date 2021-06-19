@@ -33,11 +33,22 @@ function CalcCAI() {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        height: "100vh",
+        background: "#222",
+        color: "#fff",
+        display: "flex",
+        flexDirection: "column",
+        padding: 18,
+        boxSizing: "border-box",
+      }}
+    >
       <textarea
         placeholder="codon usage table"
         value={usageTable}
         onChange={(e) => setUsageTable(e.target.value)}
+        style={{ height: 240 }}
       />
       <input
         placeholder="dna sequence"
@@ -51,6 +62,15 @@ function CalcCAI() {
           <p>log odds : {result.logOdds}</p>
         </div>
       )}
+
+      <div style={{ flex: 1 }} />
+
+      <p>examples</p>
+      {dnas.map((item, i) => (
+        <button key={i} onClick={(e) => setDna(item)}>
+          {item}
+        </button>
+      ))}
     </div>
   );
 }
