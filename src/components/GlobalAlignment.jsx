@@ -14,7 +14,13 @@ function GlobalAlignment() {
   const [result, setResult] = useState(null);
 
   const handleGlobalAlignment = (e) => {
-    const result = globalAlignment(seq1, seq2, match, mis, gap);
+    const result = globalAlignment(
+      seq1,
+      seq2,
+      parseFloat(match),
+      parseFloat(mis),
+      parseFloat(gap)
+    );
     setResult(result);
   };
 
@@ -49,17 +55,17 @@ function GlobalAlignment() {
         <input
           placeholder="match score"
           value={match}
-          onChange={(e) => setMatch(parseFloat(e.target.value))}
+          onChange={(e) => setMatch(e.target.value)}
         />
         <input
           placeholder="mismatch score"
           value={mis}
-          onChange={(e) => setMis(parseFloat(e.target.value))}
+          onChange={(e) => setMis(e.target.value)}
         />
         <input
           placeholder="gap score"
           value={gap}
-          onChange={(e) => setGap(parseFloat(e.target.value))}
+          onChange={(e) => setGap(e.target.value)}
         />
       </div>
 
