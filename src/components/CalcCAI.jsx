@@ -35,6 +35,7 @@ function CalcCAI() {
   return (
     <div
       style={{
+        width: "50%",
         height: "100vh",
         background: "#222",
         color: "#fff",
@@ -44,6 +45,7 @@ function CalcCAI() {
         boxSizing: "border-box",
       }}
     >
+      <h1>CAI Calculator</h1>
       <textarea
         placeholder="codon usage table"
         value={usageTable}
