@@ -2,8 +2,8 @@ import * as math from "mathjs";
 import { useState } from "react";
 
 const seqs = [
-  "cagcgtcgccggccttattgggacgttgcaataagcaccgacggcaatcctacactggacgcccggaaataatcataatacgtgttcacccaatcgttgtggatg",
-  "tcgttcctcggagacgaaagtgggaaagctaaagcactgcagggcatgtaagacccgcgcagttgccgataatcaatctcaccatcggttgtggagagat",
+  "cagcgtcgccggccttattgggacgttgcaataagcaccgacggcaatcctacactggacgcccggaaataatcataatacgtgttcacccaatcgttgtggatg".toUpperCase(),
+  "tcgttcctcggagacgaaagtgggaaagctaaagcactgcagggcatgtaagacccgcgcagttgccgataatcaatctcaccatcggttgtggagagat".toUpperCase(),
 ];
 
 function GlobalAlignment() {
@@ -72,9 +72,20 @@ function GlobalAlignment() {
       <button onClick={handleGlobalAlignment}>Commit Alignment</button>
 
       {result && (
-        <div style={{ overflow: "hidden", wordWrap: "break-word" }}>
+        <div
+          style={{
+            overflow: "hidden",
+            wordWrap: "break-word",
+            fontSize: "0.65rem",
+          }}
+        >
           <p>Aligned 1 : {result.align1}</p>
           <p>Aligned 2 : {result.align2}</p>
+          <p>Score : {result.score}</p>
+          <p>
+            Match {result.matchTotal}, Mismatch {result.misTotal}, Indel{" "}
+            {result.indelTotal}
+          </p>
         </div>
       )}
     </div>
@@ -84,50 +95,61 @@ function GlobalAlignment() {
 export default GlobalAlignment;
 
 const globalAlignment = (seq1, seq2, match = 1, mis = -1, gap = -1) => {
-  let data = math.zeros([seq1.length + 1, seq2.length + 1]);
-  let matchData = math.zeros([seq1.length, seq2.length]);
+  let F = math.zeros([seq1.length + 1, seq2.length + 1]);
+  let S = math.zeros([seq1.length, seq2.length]);
 
   for (let i = 0; i < seq1.length; ++i)
     for (let j = 0; j < seq2.length; ++j)
-      if (seq1[i] === seq2[j]) matchData[i][j] = match;
-      else matchData[i][j] = mis;
+      if (seq1[i] === seq2[j]) S[i][j] = match;
+      else S[i][j] = mis;
 
-  for (let i = 0; i < seq1.length + 1; ++i) data[i][0] = i * gap;
-  for (let i = 0; i < seq2.length; ++i) data[0][i] = i * gap;
-
+  for (let i = 0; i < seq1.length + 1; ++i) F[i][0] = i * gap;
+  for (let i = 0; i < seq2.length + 1; ++i) F[0][i] = i * gap;
   for (let i = 1; i < seq1.length + 1; ++i)
     for (let j = 1; j < seq2.length + 1; ++j)
-      data[i][j] = Math.max(
-        data[i - 1][j] + gap,
-        data[i][j - 1] + gap,
-        data[i - 1][j - 1] + matchData[i - 1][j - 1]
+      F[i][j] = Math.max(
+        F[i - 1][j - 1] + S[i - 1][j - 1],
+        F[i - 1][j] + gap,
+        F[i][j - 1] + gap
       );
 
   let align1 = "";
   let align2 = "";
-
-  for (let li = seq1.length, lj = seq2.length; li > 0 && lj > 0; ) {
-    if (
-      li > 0 &&
-      lj > 0 &&
-      data[li][lj] === data[li - 1][lj - 1] + matchData[li - 1][lj - 1]
-    ) {
-      align1 = seq1[li - 1] + align1;
-      align2 = seq2[lj - 1] + align2;
-      --li;
-      --lj;
-    } else if (li > 0 && data[li][lj] === data[li - 1][lj] + gap) {
-      align1 = seq1[li - 1] + align1;
+  for (let i = seq1.length, j = seq2.length; i > 0 && j > 0; ) {
+    if (i > 0 && j > 0 && F[i][j] === F[i - 1][j - 1] + S[i - 1][j - 1]) {
+      align1 = seq1[i - 1] + align1;
+      align2 = seq2[j - 1] + align2;
+      --i;
+      --j;
+    } else if (i > 0 && F[i][j] === F[i - 1][j] + gap) {
+      align1 = seq1[i - 1] + align1;
       align2 = "_" + align2;
-      --li;
+      --i;
     } else {
       align1 = "_" + align1;
-      align2 = seq2[lj - 1] + align2;
-      --lj;
+      align2 = seq2[j - 1] + align2;
+      --j;
     }
   }
 
-  console.log(align1, align2);
+  console.log(align1, align2, F);
 
-  return { align1, align2 };
+  const score = F[seq1.length][seq2.length];
+
+  let matchTotal = 0;
+  align1.split("").forEach((curr, i) => {
+    if (curr === align2[i]) ++matchTotal;
+  });
+
+  let misTotal = 0;
+  align1.split("").forEach((curr, i) => {
+    if (curr !== align2[i] && curr !== "_" && align2[i] !== "_") ++misTotal;
+  });
+
+  let indelTotal = 0;
+  align1.split("").forEach((curr, i) => {
+    if (curr === "_" || align2[i] === "_") ++indelTotal;
+  });
+
+  return { align1, align2, score, matchTotal, misTotal, indelTotal };
 };

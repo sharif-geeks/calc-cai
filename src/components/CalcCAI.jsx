@@ -103,7 +103,7 @@ const calcCAI = (dna, usageTable) => {
 
   const list = listInit.map((item) => [...item, qkSelector[item[1]]]);
 
-  console.log("list", list);
+  console.log("list", list.map((item) => item.join(" ")).join("\n"));
 
   const protList = []; // [protein,pk,qk]
   Array.from({ length: seq.length / 3 }).forEach((_, i) => {
