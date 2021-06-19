@@ -115,7 +115,7 @@ const globalAlignment = (seq1, seq2, match = 1, mis = -1, gap = -1) => {
 
   let align1 = "";
   let align2 = "";
-  for (let i = seq1.length, j = seq2.length; i > 0 && j > 0; ) {
+  for (let i = seq1.length, j = seq2.length; i > 0 || j > 0; ) {
     if (i > 0 && j > 0 && F[i][j] === F[i - 1][j - 1] + S[i - 1][j - 1]) {
       align1 = seq1[i - 1] + align1;
       align2 = seq2[j - 1] + align2;
