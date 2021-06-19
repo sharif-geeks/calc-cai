@@ -1,13 +1,14 @@
 import * as math from "mathjs";
 import { useState } from "react";
 
+const seqs = [
+  "cagcgtcgccggccttattgggacgttgcaataagcaccgacggcaatcctacactggacgcccggaaataatcataatacgtgttcacccaatcgttgtggatg",
+  "tcgttcctcggagacgaaagtgggaaagctaaagcactgcagggcatgtaagacccgcgcagttgccgataatcaatctcaccatcggttgtggagagat",
+];
+
 function GlobalAlignment() {
-  const [seq1, setSeq1] = useState(
-    "cagcgtcgccggccttattgggacgttgcaataagcaccgacggcaatcctacactggacgcccggaaataatcataatacgtgttcacccaatcgttgtggatg"
-  );
-  const [seq2, setSeq2] = useState(
-    "tcgttcctcggagacgaaagtgggaaagctaaagcactgcagggcatgtaagacccgcgcagttgccgataatcaatctcaccatcggttgtggagagat"
-  );
+  const [seq1, setSeq1] = useState(seqs[0]);
+  const [seq2, setSeq2] = useState(seqs[1]);
   const [match, setMatch] = useState(1);
   const [mis, setMis] = useState(-1);
   const [gap, setGap] = useState(-1);
@@ -27,9 +28,8 @@ function GlobalAlignment() {
   return (
     <div
       style={{
-        width: "50%",
-        height: "100vh",
-        background: "#542",
+        flex: 1,
+        background: "#435",
         color: "#fff",
         display: "flex",
         flexDirection: "column",
